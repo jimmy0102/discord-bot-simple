@@ -43,24 +43,29 @@ async def on_message(message):
     # コマンドも処理できるようにする
     await bot.process_commands(message)
 
-# リアクションが追加されたときのイベント
+# リアクションが追加されたときのイベント（過去のメッセージも含む）
 @bot.event
-async def on_reaction_add(reaction, user):
+async def on_raw_reaction_add(payload):
     # Bot自身のリアクションは無視
-    if user == bot.user:
+    if payload.user_id == bot.user.id:
         return
     
     # 特定のチャンネルでのみ反応
-    if reaction.message.channel.id == 1396236494301298801:
+    if payload.channel_id == 1396236494301298801:
         # サムズアップ（👍）のリアクションかチェック
-        if str(reaction.emoji) == '👍':
+        if str(payload.emoji) == '👍':
+            # チャンネルとメッセージを取得
+            channel = bot.get_channel(payload.channel_id)
+            message = await channel.fetch_message(payload.message_id)
+            user = bot.get_user(payload.user_id)
+            
             # メッセージの内容を取得（長い場合は省略）
-            message_content = reaction.message.content
+            message_content = message.content
             if len(message_content) > 50:
                 message_content = message_content[:50] + '...'
             
             # リアクションが付けられたことを通知
-            await reaction.message.channel.send(
+            await channel.send(
                 f'{user.mention}さんが「{message_content}」のメッセージにグッドマーク👍を押しました！'
             )
 
