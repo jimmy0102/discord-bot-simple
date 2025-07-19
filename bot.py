@@ -28,9 +28,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    # 特定のチャンネルIDでのみ返信
+    # 特定のチャンネルIDかつ、Botがメンションされているかリプライされている場合のみ返信
     if message.channel.id == 1396236494301298801:
-        await message.channel.send('こんにちは！良い一日を！')
+        # Botがメンションされているか、メッセージがBotへのリプライかチェック
+        if bot.user in message.mentions or (message.reference and message.reference.resolved and message.reference.resolved.author == bot.user):
+            await message.channel.send('こんにちは！良い一日を！')
 
     # コマンドも処理できるようにする
     await bot.process_commands(message)
