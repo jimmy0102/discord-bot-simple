@@ -42,6 +42,27 @@ async def on_message(message):
     # コマンドも処理できるようにする
     await bot.process_commands(message)
 
+# リアクションが追加されたときのイベント
+@bot.event
+async def on_reaction_add(reaction, user):
+    # Bot自身のリアクションは無視
+    if user == bot.user:
+        return
+    
+    # 特定のチャンネルでのみ反応
+    if reaction.message.channel.id == 1396236494301298801:
+        # サムズアップ（👍）のリアクションかチェック
+        if str(reaction.emoji) == '👍':
+            # メッセージの内容を取得（長い場合は省略）
+            message_content = reaction.message.content
+            if len(message_content) > 50:
+                message_content = message_content[:50] + '...'
+            
+            # リアクションが付けられたことを通知
+            await reaction.message.channel.send(
+                f'{user.mention}さんが「{message_content}」のメッセージにグッドマーク👍を押しました！'
+            )
+
 # コマンドの例
 @bot.command(name='ping')
 async def ping(ctx):
