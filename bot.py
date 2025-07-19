@@ -54,20 +54,32 @@ async def on_raw_reaction_add(payload):
     if payload.channel_id == 1396236494301298801:
         # サムズアップ（👍）のリアクションかチェック
         if str(payload.emoji) == '👍':
-            # チャンネルとメッセージを取得
+            # チャンネルを取得
             channel = bot.get_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
-            user = bot.get_user(payload.user_id)
+            if not channel:
+                return
             
-            # メッセージの内容を取得（長い場合は省略）
-            message_content = message.content
-            if len(message_content) > 50:
-                message_content = message_content[:50] + '...'
-            
-            # リアクションが付けられたことを通知
-            await channel.send(
-                f'{user.mention}さんが「{message_content}」のメッセージにグッドマーク👍を押しました！'
-            )
+            try:
+                # メッセージを取得
+                message = await channel.fetch_message(payload.message_id)
+                
+                # ユーザーを取得（ギルドから取得）
+                guild = channel.guild
+                member = guild.get_member(payload.user_id)
+                if not member:
+                    member = await guild.fetch_member(payload.user_id)
+                
+                # メッセージの内容を取得（長い場合は省略）
+                message_content = message.content
+                if len(message_content) > 50:
+                    message_content = message_content[:50] + '...'
+                
+                # リアクションが付けられたことを通知
+                await channel.send(
+                    f'{member.mention}さんが「{message_content}」のメッセージにグッドマーク👍を押しました！'
+                )
+            except Exception as e:
+                print(f'リアクション処理エラー: {e}')
 
 # コマンドの例
 @bot.command(name='ping')
