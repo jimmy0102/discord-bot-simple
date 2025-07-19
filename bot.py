@@ -27,8 +27,10 @@ async def on_message(message):
     # Bot自身のメッセージには反応しない
     if message.author == bot.user:
         return
-
-    await message.channel.send('こんにちは！良い一日を！')
+    
+    # 特定のチャンネルIDでのみ返信
+    if message.channel.id == 1396236494301298801:
+        await message.channel.send('こんにちは！良い一日を！')
 
     # コマンドも処理できるようにする
     await bot.process_commands(message)
