@@ -16,6 +16,11 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 @bot.event
 async def on_ready():
     print(f'{bot.user} としてログインしました')
+    try:
+        synced = await bot.tree.sync()
+        print(f'{len(synced)}個のコマンドを同期しました')
+    except Exception as e:
+        print(f'コマンドの同期に失敗しました: {e}')
 
 @bot.event
 async def on_message(message):
@@ -32,6 +37,37 @@ async def on_message(message):
 @bot.command(name='ping')
 async def ping(ctx):
     await ctx.send('Pong!')
+
+# スラッシュコマンド: ヘルプ
+@bot.tree.command(name='help', description='このBotの使い方を表示します')
+async def help_command(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title='Discord Bot ヘルプ',
+        description='このBotの使い方を説明します',
+        color=discord.Color.blue()
+    )
+    
+    embed.add_field(
+        name='基本機能',
+        value='このBotは全てのメッセージに「こんにちは！良い一日を！」と返信します。',
+        inline=False
+    )
+    
+    embed.add_field(
+        name='コマンド一覧',
+        value='**`/help`** - このヘルプメッセージを表示\n**`!ping`** - Botの応答を確認（Pong!と返信）',
+        inline=False
+    )
+    
+    embed.add_field(
+        name='必要な権限',
+        value='• メッセージの送信\n• メッセージ履歴の表示\n• チャンネルの表示',
+        inline=False
+    )
+    
+    embed.set_footer(text='Discord Bot v1.0')
+    
+    await interaction.response.send_message(embed=embed)
 
 # Botを起動
 if __name__ == '__main__':
