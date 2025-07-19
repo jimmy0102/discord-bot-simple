@@ -32,7 +32,12 @@ async def on_message(message):
     if message.channel.id == 1396236494301298801:
         # Botがメンションされているか、メッセージがBotへのリプライかチェック
         if bot.user in message.mentions or (message.reference and message.reference.resolved and message.reference.resolved.author == bot.user):
-            await message.channel.send('こんにちは！良い一日を！')
+            # メンションを除去してメッセージ内容を取得
+            content = message.content.replace(f'<@{bot.user.id}>', '').strip()
+            if content:
+                await message.channel.send(f'「{content}」が入力されました。')
+            else:
+                await message.channel.send('何も入力されていません。')
 
     # コマンドも処理できるようにする
     await bot.process_commands(message)
