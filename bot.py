@@ -23,13 +23,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # メッセージに反応して返信
-    if 'こんにちは' in message.content:
-        await message.channel.send('こんにちは！良い一日を！')
-    elif 'おはよう' in message.content:
-        await message.channel.send('おはようございます！')
-    elif 'こんばんは' in message.content:
-        await message.channel.send('こんばんは！今日もお疲れ様でした！')
+    await message.channel.send('こんにちは！良い一日を！')
 
     # コマンドも処理できるようにする
     await bot.process_commands(message)
@@ -46,5 +40,5 @@ if __name__ == '__main__':
     if not token:
         print('エラー: DISCORD_BOT_TOKENが.envファイルに設定されていません')
         exit(1)
-    
+
     bot.run(token)
